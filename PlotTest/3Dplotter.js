@@ -1,82 +1,54 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-    <script src="Scripts/jquery-2.1.1.js"></script>
-    <script src="Scripts/three.js/build/three.js"></script>
-    <script src="Scripts/OrbitControls.js"></script>
-    <script src="Scripts/droid_sans_bold.typeface.js"></script>
-    <script src="Scripts/droid_sans_regular.typeface.js"></script>
-    <style type="text/css">
-        #graphDiv{
-            margin:50px auto;
-            height:320px;
-            width:600px;
-        }
-    </style>
-</head>
-<body>
-    <a href="NewPlot.html">Go to the new plot</a>
-    <div id="graphDiv" ></div>
+﻿
+(function ($) {
+
+    $.fn.ThreeDiPlot = function(options){
+
+        //Graph canvas
+        var gr = this;
 
 
-    <script>
+        //Options
+        var optDefault = {
+            bgColor: 0x888888
+        };
 
-        var gr = $("#graphDiv");
+        var opt = $.extend(optDefault, options);
 
+        //Create a THREE Scene
         var scene = new THREE.Scene();
-
         scene.lookAt(0, 1, 0);
-        //Camera
-        var SCREEN_WIDTH = gr.innerWidth(), SCREEN_HEIGHT = gr.innerHeight();
-        var VIEW_ANGLE = 30, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+
+        //Camera Setup
+        var SCREEN_WIDTH = gr.innerWidth(),
+            SCREEN_HEIGHT = gr.innerHeight();
+        var VIEW_ANGLE = 30,
+            ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT,
+            NEAR = 0.1, FAR = 20000;
+
         camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
 
         camera.position.set(10, 4, 7);
-        //camera.lookAt(new THREE.Vector3(0,0,0));
-        //camera.up = new THREE.Vector3(0, 0, 1);
 
         scene.add(camera);
 
+        //THREE Renderer
         //if (Detector.webgl)
-           var renderer = new THREE.WebGLRenderer({ antialias: true });
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
         //else
         //    renderer = new THREE.CanvasRenderer();
 
-        // bgcolor
-        renderer.setClearColor(0x888888, 1);
+        
+        renderer.setClearColor(opt.bgColor, 1); // Set the background color
 
         renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         gr.append(renderer.domElement);
 
 
-        //Light
-        //var light = new THREE.PointLight(0xffffff);
-        //light.position.set(0, 250, 0);
-        //scene.add(light);
-
-
         //Control
         var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-        var graphGeometry;
-        var gridMaterial, wireMaterial, vertexColorMaterial;
-        var graphMesh;
 
-        var normMaterial = new THREE.MeshNormalMaterial;
-        var shadeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-
-        //var wireTexture = new THREE.ImageUtils.loadTexture('images/square.png');
-        //wireTexture.wrapS = wireTexture.wrapT = THREE.RepeatWrapping;
-        //wireTexture.repeat.set(40, 40);
-        wireMaterial = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide , wireframe:true, transparent:false});
-
-        //Grids
-        //var gridXZ = new THREE.GridHelper(2.5, 0.5);
-        //gridXZ.setColors(new THREE.Color(0x006600), new THREE.Color(0xeeeeee));
-        //gridXZ.position.set(2.5, 0, 2.5);
-        //scene.add(gridXZ);
-
+        //Set and create the grids
         var gridXY = new THREE.GridHelper(2.5, 0.5);
         gridXY.position.set(2.5, 0, 0);
         gridXY.rotation.x = Math.PI / 2;
@@ -90,38 +62,43 @@
         scene.add(gridYZ);
 
 
-
-        var vertexColorMaterial = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide });
-
+        //Add the axis
         scene.add(new THREE.AxisHelper(5));
 
-        //var geometry = new THREE.SphereGeometry(3, 35, 35);
-        //var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        //var cube = new THREE.Mesh(geometry, material);
-        //scene.add(cube);
+        addLabel("1.1", new THREE.Vector3(5, 1, 0));
 
         createGraph();
 
-        
+        render();
 
-        var textGeom = new THREE.TextGeometry("1.1",
-        {
-            size: 0.17, height: 0.008, curveSegments: 3,
-            font: "droid sans", weight: "normal", style: "normal",
-            //bevelThickness: 1, bevelSize: 2, bevelEnabled: true,
-            //material: 0, extrudeMaterial: 1
-        });
-        // font: helvetiker, gentilis, droid sans, droid serif, optimer
-        // weight: normal, bold
+     
+        function addLabel(string, position) {
+           
+            var textGeom = new THREE.TextGeometry(string,
+            {
+                size: 0.17, height: 0.008, curveSegments: 3,
+                font: "droid sans", weight: "normal", style: "normal",
+                //bevelThickness: 1, bevelSize: 2, bevelEnabled: true,
+                //material: 0, extrudeMaterial: 1
+            });
+            // font: helvetiker, gentilis, droid sans, droid serif, optimer
+            // weight: normal, bold
 
-        var textMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
-        var textMesh = new THREE.Mesh(textGeom, textMaterial);
+            var textMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
+            var textMesh = new THREE.Mesh(textGeom, textMaterial);
 
 
-        textMesh.position.set(5, 1, 0);
-        textMesh.lookAt(camera.position)
-        scene.add(textMesh);
+            textMesh.position.set(position);
+            textMesh.lookAt(camera.position)
+            scene.add(textMesh);
+        }
 
+
+        //Add all the label numbers on the grid
+        function addNumbers() { };
+
+
+        //Render function
         var render = function () {
             requestAnimationFrame(render);
 
@@ -132,11 +109,6 @@
         };
 
 
-        render();
-
-
-
-
         function createGraph() {
 
 
@@ -144,13 +116,13 @@
             var xRange = 5;
             var yRange = 5;
             var meshFunction = function (x, y) {
-                x = xRange * x-2.5;
-                y = yRange * y-2.5;
-                var z = 0.5*Math.sin(Math.sqrt(20*x *x + 20*y *y));//= Math.cos(x) * Math.sqrt(y);
+                x = xRange * x - 2.5;
+                y = yRange * y - 2.5;
+                var z = 0.5 * Math.sin(Math.sqrt(20 * x * x + 20 * y * y));//= Math.cos(x) * Math.sqrt(y);
                 if (isNaN(z))
                     return new THREE.Vector3(0, 0, 0); // TODO: better fix
                 else
-                    return new THREE.Vector3(x+2.5, z, y+2.5);
+                    return new THREE.Vector3(x + 2.5, z, y + 2.5);
             };
 
             // true => sensible image tile repeat...
@@ -170,7 +142,7 @@
             for (var i = 0; i < graphGeometry.vertices.length; i++) {
                 point = graphGeometry.vertices[i];
                 color = new THREE.Color(0x0000ff);
-                color.setHSL(0.575, 0.62, 0.9-0.7 * (zMax - point.y) / zRange);
+                color.setHSL(0.575, 0.62, 0.9 - 0.7 * (zMax - point.y) / zRange);
                 graphGeometry.colors[i] = color; // use this array for convenience
             }
             // copy the colors as necessary to the face's vertexColors array.
@@ -200,7 +172,6 @@
             graphMesh.doubleSided = true;
             scene.add(graphMesh);
         }
+    };
 
-    </script>
-</body>
-</html>
+}(jQuery));

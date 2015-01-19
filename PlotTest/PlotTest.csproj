@@ -65,7 +65,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="3Dplotter.js" />
     <Content Include="Index.html" />
+    <Content Include="NewPlot.html" />
     <Content Include="packages.config" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\droid_sans_bold.typeface.js" />
