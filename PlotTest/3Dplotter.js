@@ -5,7 +5,8 @@
 
         //Graph canvas
         var gr = this;
-
+        var graphMesh, wireMaterial, textMesh;
+        wireMaterial = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors, side: THREE.DoubleSide, wireframe: true, transparent: false });
 
         //Options
         var optDefault = {
@@ -65,9 +66,11 @@
         //Add the axis
         scene.add(new THREE.AxisHelper(5));
 
-        addLabel("1.1", new THREE.Vector3(5, 1, 0));
+
 
         createGraph();
+
+        addLabel(1.1, new THREE.Vector3(5, 1, 0));
 
         render();
 
@@ -77,7 +80,7 @@
             var textGeom = new THREE.TextGeometry(string,
             {
                 size: 0.17, height: 0.008, curveSegments: 3,
-                font: "droid sans", weight: "normal", style: "normal",
+                font: "droid sans", weight: "normal", style: "normal"
                 //bevelThickness: 1, bevelSize: 2, bevelEnabled: true,
                 //material: 0, extrudeMaterial: 1
             });
@@ -85,10 +88,10 @@
             // weight: normal, bold
 
             var textMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
-            var textMesh = new THREE.Mesh(textGeom, textMaterial);
+            textMesh = new THREE.Mesh(textGeom, textMaterial);
 
 
-            textMesh.position.set(position);
+            textMesh.position.set(5,1,0);
             textMesh.lookAt(camera.position)
             scene.add(textMesh);
         }
@@ -99,16 +102,25 @@
 
 
         //Render function
-        var render = function () {
+        function render() {
             requestAnimationFrame(render);
-
+           
+            moveCamera();
             //cube.rotation.x += 0.1;
             textMesh.lookAt(camera.position)
             controls.update();
             renderer.render(scene, camera);
         };
 
+        function moveCamera() {
+            var x = camera.position.getComponent(0);
+            var y = camera.position.getComponent(1);
+            var z = camera.position.getComponent(2);
+            var l = Math.sqrt(x*x + y*y);
+            var ang = Math.atan(y / x) + 0.001;
 
+            camera.position.set(l * Math.cos(ang), l * Math.sin(ang),z)
+        }
         function createGraph() {
 
 
