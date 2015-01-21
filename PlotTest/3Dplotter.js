@@ -10,7 +10,7 @@
 
         //Options
         var optDefault = {
-            bgColor: 0x888888
+            bgColor: 0xFAF8DF
         };
 
         var opt = $.extend(optDefault, options);
@@ -34,7 +34,7 @@
 
         //THREE Renderer
         //if (Detector.webgl)
-        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha:true });
         //else
         //    renderer = new THREE.CanvasRenderer();
 
@@ -53,13 +53,13 @@
         var gridXY = new THREE.GridHelper(2.5, 0.5);
         gridXY.position.set(2.5, 0, 0);
         gridXY.rotation.x = Math.PI / 2;
-        gridXY.setColors(new THREE.Color(0x000066), new THREE.Color(0xeeeeee));
+        gridXY.setColors(new THREE.Color(0x000066), new THREE.Color(0xaaaaaa));
         scene.add(gridXY);
 
         var gridYZ = new THREE.GridHelper(2.5, 0.5);
         gridYZ.position.set(0, 0, 2.5);
         gridYZ.rotation.z = Math.PI / 2;
-        gridYZ.setColors(new THREE.Color(0x660000), new THREE.Color(0xeeeeee));
+        gridYZ.setColors(new THREE.Color(0x660000), new THREE.Color(0xaaaaaa));
         scene.add(gridYZ);
 
 
@@ -70,10 +70,20 @@
 
         createGraph();
 
-        addLabel(1.1, new THREE.Vector3(5, 1, 0));
+        var labels = new Array();
 
+        createText();
         render();
 
+
+
+        function createText() {
+
+            var pos;
+            for (pos = 2.5; pos >= -2.5; pos-=0.5)
+                addLabel(pos, new THREE.Vector3(5.1, pos, 0));
+
+        }
      
         function addLabel(string, position) {
            
@@ -87,16 +97,18 @@
             // font: helvetiker, gentilis, droid sans, droid serif, optimer
             // weight: normal, bold
 
-            var textMaterial = new THREE.MeshBasicMaterial({ color: 0x000088 });
+            var textMaterial = new THREE.MeshBasicMaterial({ color: 0x888888 });
             textMesh = new THREE.Mesh(textGeom, textMaterial);
 
 
-            textMesh.position.set(5,1,0);
-            textMesh.lookAt(camera.position)
+            textMesh.position.set(position.getComponent(0),position.getComponent(1),position.getComponent(2));
+            labels.push(textMesh);
             scene.add(textMesh);
         }
 
-
+        function textLookAt() {
+            for (var i = 0; i < labels.length; i++) labels[i].lookAt(camera.position);
+        }
         //Add all the label numbers on the grid
         function addNumbers() { };
 
@@ -105,9 +117,9 @@
         function render() {
             requestAnimationFrame(render);
            
-            moveCamera();
+            //moveCamera();
             //cube.rotation.x += 0.1;
-            textMesh.lookAt(camera.position)
+            textLookAt();
             controls.update();
             renderer.render(scene, camera);
         };
@@ -116,11 +128,13 @@
             var x = camera.position.getComponent(0);
             var y = camera.position.getComponent(1);
             var z = camera.position.getComponent(2);
-            var l = Math.sqrt(x*x + y*y);
-            var ang = Math.atan(y / x) + 0.001;
-
-            camera.position.set(l * Math.cos(ang), l * Math.sin(ang),z)
+            var l = Math.sqrt(x*x + z*z);
+            var ang = Math.atan(z / x) + 0.002;
+            console.log(ang);
+            camera.position.set(l*Math.cos(ang),y,l*Math.sin(ang) );
         }
+
+
         function createGraph() {
 
 
@@ -153,7 +167,7 @@
             // first, assign colors to vertices as desired
             for (var i = 0; i < graphGeometry.vertices.length; i++) {
                 point = graphGeometry.vertices[i];
-                color = new THREE.Color(0x0000ff);
+                color = new THREE.Color(0x00ff00);
                 color.setHSL(0.575, 0.62, 0.9 - 0.7 * (zMax - point.y) / zRange);
                 graphGeometry.colors[i] = color; // use this array for convenience
             }
@@ -175,7 +189,7 @@
 
             if (graphMesh) {
                 scene.remove(graphMesh);
-                // renderer.deallocateObject( graphMesh );
+                 renderer.deallocateObject( graphMesh );
             }
 
             //wireMaterial.map.repeat.set(segments, segments);
