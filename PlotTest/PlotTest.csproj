@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="3Dplotter.js" />
+    <Content Include="img\3px-tile.png" />
     <Content Include="img\cream-pixels.png" />
     <Content Include="Index.html" />
     <Content Include="NewPlot.html" />
