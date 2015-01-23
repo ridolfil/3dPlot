@@ -2,26 +2,72 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
-    <style type="text/css">
-        #graphDiv {
-            margin: 50px auto;
-            height: 320px;
-            width: 600px;
-        }
-    </style>
+
+
     <script src="Scripts/jquery-2.1.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
     <script src="Scripts/three.js/build/three.js"></script>
     <script src="Scripts/OrbitControls.js"></script>
     <script src="3Dplotter.js"></script>
     <script src="Scripts/droid_sans_bold.typeface.js"></script>
     <script src="Scripts/droid_sans_regular.typeface.js"></script>
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
 
+    <style type="text/css">
+        body {
+            background-color: #201F15;
+            color:aliceblue;
+            background-image: url('img/cream-pixels.png');
+        }
+        #graphDiv {
+            margin: 20px auto;
+            height: 320px;
+            width: 600px;
+            border: 1px solid rgb(218, 209, 196);
+            box-shadow: 2px 3px 7px #454545;
+        }
+
+        a {
+            text-decoration: none;
+            color: #AB9867;
+        }
+
+        .main-container {
+            margin-top: 100px;
+        }
+        #title{
+            line-height:30px;
+            border-bottom: 1px dashed #A29CB0;
+            border-top: 1px dashed #A29CB0;
+            margin-bottom: 30px;
+        }
+        .info-square{
+            background-color: rgba(0,0,0,.16);
+            padding:10px 20px;
+            margin-top:20px;
+        }
+    </style>
 </head>
 <body>
-    <div id="graphDiv"></div>
+    <div class="container main-container">
+        <div class="row">
+            <div class="col-md-4 info-square">
+                
+                <h3 class="text-center" id="title">3D Graphs Plugin</h3>
+                <p class="text-center">Simple and lightweight jQuery plugins to print 3D graphs rendered using <a href="http://threejs.org/">three.js</a> </p>
+
+            </div>
+            <div class="col-md-8">
+
+                <div id="graphDiv"></div>
+
+            </div>
+        </div>
+    </div>
 
     <script>
-        $("#graphDiv").ThreeDiPlot();
+        $("#graphDiv").ThreeDiPlot({ });
     </script>
+
 </body>
 </html>

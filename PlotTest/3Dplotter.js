@@ -112,7 +112,7 @@
         function render() {
             requestAnimationFrame(render);
            
-            //moveCamera();
+            moveCamera();
             //cube.rotation.x += 0.1;
             textLookAt();
             controls.update();
@@ -120,15 +120,16 @@
         };
 
 
-        //function moveCamera() {
-        //    var x = camera.position.getComponent(0);
-        //    var y = camera.position.getComponent(1);
-        //    var z = camera.position.getComponent(2);
-        //    var l = Math.sqrt(x*x + z*z);
-        //    var ang = Math.atan(z / x) + 0.002;
-        //    console.log(ang);
-        //    camera.position.set(l*Math.cos(ang),y,l*Math.sin(ang) );
-        //}
+        function moveCamera() {
+            var rev = 1;
+            var x = camera.position.getComponent(0);
+            var y = camera.position.getComponent(1);
+            var z = camera.position.getComponent(2);
+            var l = Math.sqrt(x*x + z*z);
+            var ang = Math.atan(z / x) + 0.001*(2*Math.ceil(Math.cos(0.0003*Date.now()))-1);
+            if (2 * ang / Math.PI < 0.1) rev = 1;
+            camera.position.set(l*Math.cos(ang),y,l*Math.sin(ang) );
+        }
 
 
         function createGraph() {
